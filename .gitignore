@@ -1,0 +1,72 @@
+aerospike/*
+couchbase/*
+couchbase-lite/*
+ior/*
+leveldb/*
+memcached/*
+redis/*
+testfiles/*
+
+
+# Aerospike
+!aerospike/compile.sh
+!aerospike/sync_m.cpp
+!aerospike/update.sh
+
+# Couchbase
+!couchbase/compile.sh
+!couchbase/run_server.sh
+!couchbase/sync.cpp
+!couchbase/sync_m.cpp
+!couchbase/test.sh
+!couchbase/update.sh
+
+# Couchbase lite
+!couchbase-lite/update.sh
+
+# Hadoop
+!hadoop/clean.sh
+!hadoop/compile.sh
+!hadoop/sync.cpp
+!hadoop/test.sh
+
+# ior
+!ior/update.sh
+
+# LevelDB
+!leveldb/async.cpp
+!leveldb/async_batch.cpp
+!leveldb/async_m.cpp
+!leveldb/compile.sh
+!leveldb/sync.cpp
+!leveldb/sync_batch.cpp
+!leveldb/sync_m.cpp
+!leveldb/update.sh
+
+# Memcached
+!memcached/compile.sh
+!memcached/kill_server.sh
+!memcached/main.cpp
+!memcached/memcache-top
+!memcached/run_server.sh
+
+# Redis
+!redis/async.cpp
+!redis/async_m.cpp
+!redis/compile.sh
+!redis/run_redis.sh
+!redis/sync.cpp
+!redis/sync_m.cpp
+!redis/testdata.cpp
+!redis/update.sh
+
+# Test files
+!testfiles/gen.c
+!testfiles/gen.sh
+
+# Random stuff in the root
+!backup.sh
+!main.tex
+!README.md
+!LICENSE
+!test.sh

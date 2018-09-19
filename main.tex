@@ -1,0 +1,213 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\title{Key-Value database performance report: A comparison of Redis, LeveldDB, Hadoop HDFS and Couchbase on synchronous and asynchronous operation}
+\author{Author}
+\date{June 2018}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+\tableofcontents
+
+\newpage
+\section{Introduction}
+
+\section{Test program structure}
+
+Testing is done using a program in C++ which creates several threads that insert and get data from the DB:
+
+\begin{enumerate}
+    \item The insertion and read functions are declared. Both are almost the same, with a \textit{while} loop that executes a block of code as many times as specified in the arguments. Depending on the DB, there will be a \textit{mutex} in action (to avoid the access to the DB from two different threads at the same time) and a line to commit the changes (in an asynchronous or synchronous mode).
+    \item In \textit{main}, the program arguments are used to set the number of threads for each function, insertions per insertion thread and reads per read thread. So if the execution is \texttt{./main 4 1000 2000}, the test will be executed with 4 insertion threads, 4 read threads, 1000 insertions per thread and 2000 reads per thread.
+    \item The chosen file that will be inserted into the DB is opened.
+    \item The DB is opened or created, and the thread arrays and atomic operation counter are defined.
+    \item The timer starts running. From this line of code we measure the execution time.
+    \item First the insertion threads, then the read threads are created. When they are all started, they are joined started from threads number 0 for insertion and read.
+    \item The timer is stopped, so only the data operations are measured. Then the DB is closed and the statistics are printed.
+\end{enumerate}
+
+The data inserted and requested for reading is not unique and can be requested, stored and overwritten several times in a row, and also requested even if the entry still does not exist. In order to maximise the performance of the test program to evaluate as objectively as possible the speed of the DB and the used libraries, the control variable of the \textit{while} in the insertion and read functions is used as the key. The value that will be stored can be chosen from an assortment of files between 1KB and 4GB.
+
+
+\section{Redis}
+This DB has the option to commit the changes both asynchronously and synchronously, so there are two different tests. The C++ library used, \textit{cpp\_redis}, has multithreaded support so no \textit{mutex} is implemented in any of the tests. The server has to be executed separately (with \textit{redis-server}), so we can run \textit{redis-cli} (the Redis command line tool) in monitor mode to see how the data is stored and read.
+
+Redis has the ability to save the DB content to disk. By default it does it automatically each N??? seconds, but we can force the saving. It is automatically executed after a shutdown call, too.
+
+\subsection{async}
+In the asynchronous test, the \texttt{commit()} function is called each time a request is done.
+
+\subsection{sync}
+The synchronous test is more configurable since the synced commit has a bigger performance impact. The \texttt{sync\_commit()} function is executed once each 100 request in each thread, and a last time before the thread ends the execution.
+
+\section{LevelDB}
+The LevelDB C++ library can execute requests synchronously and asynchronously, and it also can group insertion and deletion operations in "batches" and commit only once. A \textit{mutex} has to be used to access to one instance concurrently, so we have to take into account its overhead.
+
+In synchronous mode, this DB probably writes into disk.
+
+\subsection{async}
+When executing the test in asynchronous mode without batching, the critical zone defined by the \textit{mutex} is just the LevelDB function to put or get data. The default \textit{WriteOptions} argument provides the asynchronous mode flag.
+
+\subsection{sync}
+In synchronous mode, we have to specify the correspondent flag in a custom \textit{WriteOptions} object (\texttt{write\_options}). After that, the structure of the code is the same as in the asynchronous tests, with the \textit{put} or \textit{get} functions being the only code inside the critical zone. Note that the read operations are not affected by the change of mode.
+
+\subsection{async\_batch}
+With batching, there is an extra parameter (the constant \texttt{N}) that specifies the number of requests that are stored in each batch before committing. In these \textit{batch} tests each time a request is added to the batch we calculate whether the commit has to be executed or not, so there is an added overhead of calculating a modulo each insertion and the performance of these tests will be affected.
+
+The critical zone only comprises the operation to add the operations in the batch to the DB, so the the modulo operation can be executed in parallel.
+
+\subsection{sync\_batch}
+In this last case we use both the batching and synchronous modes. The structure of the thread code is the same as the previous one (\texttt{async\_batch} but with the added synchronous flag.
+
+
+\section{Hadoop HDFS}
+Hadoop Hadoop Hadoop Hadoop Hadoop Hadoop
+Hadoop Hadoop Hadoop Hadoop Hadoop Hadoop 
+Hadoop Hadoop Hadoop Hadoop Hadoop Hadoop 
+Hadoop Hadoop Hadoop Hadoop Hadoop 
+
+\section{Couchbase}
+We only have the synchronous mode since the official library does not support asynchronous IO. If we want to run asynchronous operations with it we have to use another ASIO library.
+
+
+\section{Testing}
+
+\subsection{Test structure and design}
+All the test programs take the same parameters: \texttt{./program [NUMBER OF THREADS] [TOTAL INSERTIONS] [TOTAL READS] [INSERTION FILE SIZE] [INSERTION FILE UNIT IN K OR M]}. An example execution could be \texttt{./sync 4 512 512 16 M}, which creates 4 insertion threads, each one with 128 pending insertions of 16MB files, and 4 read threads, each one with 128 pending reads.
+
+The parameters that should be decisive in the comparison should be the amount of insertions, the size of the inserted file, and the amount of threads. Taking into account the tests are being run in a 4 physical core machine with 8GB of RAM and 8GB of swap, for our purposes the test execution configurations for each DB will be:
+
+\begin{itemize}
+
+\item Mixed IO
+\begin{center}
+    \begin{tabular}{| p{0.45cm} | p{2.5cm} | p{1.75cm} | p{1.25cm} | p{1.5cm} |}
+    \hline
+    ID & Size & Insertions & Reads & Threads
+    \\ \hline
+    01 & 1KB-1024KB & 256 & 256 & 1-4
+    \\ \hline
+    02 & 1KB-1024KB & 512 & 512 & 1-4
+    \\ \hline
+    03 & 1KB-1024KB & 1024 & 1024 & 1-4
+    \\ \hline
+    04 & 1KB-1024KB & 2048 & 2048 & 1-4
+    \\ \hline
+    05 & 2MB & 512 & 256 & 1-4
+    \\ \hline
+    06 & 4MB & 512 & 256 & 1-4
+    \\ \hline
+    07 & 8MB & 512 & 256 & 1-4
+    \\ \hline
+    08 & 16MB & 512 & 256 & 1-4
+    \\ \hline
+    09 & 32MB & 512 & 256 & 1-4
+    \\ \hline
+    \end{tabular}
+\end{center}
+
+\item Fast insertions. These tests should not have to access to the disk.
+\begin{center}
+    \begin{tabular}{| p{0.45cm} | p{2.5cm} | p{1.75cm} | p{1.25cm} | p{1.5cm} |}
+    \hline
+    ID & Size & Insertions & Reads & Threads
+    \\ \hline
+    10 & 512KB & 64 & 0 & 1-4
+    \\ \hline
+    11 & 1MB & 64 & 0 & 1-4
+    \\ \hline
+    12 & 2MB & 64 & 0 & 1-4
+    \\ \hline
+    13 & 4MB & 64 & 0 & 1-4
+    \\ \hline
+    14 & 8MB & 64 & 0 & 1-4
+    \\ \hline
+    15 & 16MB & 64 & 0 & 1-4
+    \\ \hline
+    16 & 32MB & 64 & 0 & 1-4
+    \\ \hline
+    17 & 64MB & 64 & 0 & 1-4
+    \\ \hline
+    18 & 128MB & 64 & 0 & 1-4
+    \\ \hline
+    \end{tabular}
+\end{center}
+
+\item Heavy insertions. These tests should surpass the RAM limits of the machine and resort to disk access.
+\begin{center}
+    \begin{tabular}{| p{0.45cm} | p{2.5cm} | p{1.75cm} | p{1.25cm} | p{1.5cm} |}
+    \hline
+    ID & Size & Insertions & Reads & Threads
+    \\ \hline
+    19 & 256MB & 32 & 0 & 1-4
+    \\ \hline
+    20 & 512MB & 32 & 0 & 1-4
+    \\ \hline
+    21 & 1GB & 8 & 0 & 1-4
+    \\ \hline
+    22 & 2GB & 8 & 0 & 1-4
+    \\ \hline
+    23 & 4GB & 8 & 0 & 1-4
+    \\ \hline
+    \end{tabular}
+\end{center}
+
+\item Fast reads (with previously added entries of the correspondent size). These tests should not have to access to the disk.
+\begin{center}
+    \begin{tabular}{| p{0.45cm} | p{2.5cm} | p{1.75cm} | p{1.25cm} | p{1.5cm} |}
+    \hline
+    ID & Size & Insertions & Reads & Threads
+    \\ \hline
+    24 & 512KB & 0 & 16834 & 1-4
+    \\ \hline
+    25 & 1MB & 0 & 8192 & 1-4
+    \\ \hline
+    26 & 2MB & 0 & 4096 & 1-4
+    \\ \hline
+    27 & 4MB & 0 & 2048 & 1-4
+    \\ \hline
+    28 & 8MB & 0 & 1024 & 1-4
+    \\ \hline
+    29 & 16MB & 0 & 512 & 1-4
+    \\ \hline
+    30 & 32MB & 0 & 256 & 1-4
+    \\ \hline
+    31 & 64MB & 0 & 128 & 1-4
+    \\ \hline
+    32 & 128MB & 0 & 64 & 1-4
+    \\ \hline
+    \end{tabular}
+\end{center}
+
+\item Heavy reads (with previously added entries of the correspondent size). These tests should surpass the RAM limits of the machine and resort to disk access.
+\begin{center}
+    \begin{tabular}{| p{0.45cm} | p{2.5cm} | p{1.75cm} | p{1.25cm} | p{1.5cm} |}
+    \hline
+    ID & Size & Insertions & Reads & Threads
+    \\ \hline
+    33 & 256MB & 0 & 64 & 1-4
+    \\ \hline
+    34 & 512MB & 0 & 32 & 1-4
+    \\ \hline
+    35 & 1GB & 0 & 16 & 1-4
+    \\ \hline
+    36 & 2GB & 0 & 8 & 1-4
+    \\ \hline
+    37 & 4GB & 0 & 4 & 1-4
+    \\ \hline
+    \end{tabular}
+\end{center}
+
+\end{itemize}
+
+\subsection{Individual tests}
+\subsubsection{Redis}
+\subsubsection{LevelDB}
+\subsubsection{Hadoop HDFS}
+\subsubsection{Couchbase}
+\subsection{Comparisons}
+\end{document}
