@@ -25,6 +25,8 @@ respective owners.**
 - [Quick and easy Fedora chroot](https://nmilosev.svbtle.com/quick-and-easy-fedora-minimal-chroot)
 - [Building a LustreFS with 3 VMs](https://gist.github.com/Jorgeelalto/71798d4c3636187e66e9979946dad424)
 - [Some more LustreFS slides](https://lustre.ornl.gov/lustre101-courses/content/C1/L4/LustreTestVMs.pdf)
+- [pgfplot manual](https://www.iro.umontreal.ca/~simardr/pgfplots.pdf)
+- [csvsimple manual](https://mirror.hmc.edu/ctan/macros/latex/contrib/csvsimple/csvsimple.pdf)
 
 ## Testing and test program versions
 

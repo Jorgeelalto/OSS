@@ -16,17 +16,23 @@ echo "Number of threads, Number of insertions, Number of reads, Block Size, Size
 for th in {1..4}; do
 
 	# Stage 1
-	for size in 1 2 4 16 32 64 128 256 512 1024; do
-		echo $prog $th 4096 4096 $size "K"
+	for size in 1 2 4 8 16 32 64 128 256 512 1024; do
+		$prog $th 4096 4096 $size "K"
+		./redis/src/redis-cli FLUSHALL > /dev/null
+		sleep 1s
 	done
 
 	# Stage 2
-	for size in 1 2 4 16 32 64 128 256 512 1024; do
-		echo $prog $th $(( 4096/size )) $(( 4096/size )) $size "M"
+	for size in 1 2 4 16 32 64 128 256 512; do
+		$prog $th $(( 2048/size )) $(( 2048/size )) $size "M"
+		./redis/src/redis-cli FLUSHALL > /dev/null
+		sleep 1s
 	done
 done
 
 # Stage 3	
 for size in 1024 2048 4096; do
-	echo $prog 2 $(( 16384/size )) $(( 16384/size )) $size "M"
+	$prog 2 $(( 16384/size )) $(( 16384/size )) $size "M"
+	./redis/src/redis-cli FLUSHALL /dev/null
+	sleep 1s
 done
