@@ -7,6 +7,13 @@ memcached/*
 redis/*
 testfiles/*
 
+# Include test results
+!couchbase/couch_sync0.csv
+!couchbase/couch_sync.csv
+!leveldb/leveldb_sync0.csv
+!leveldb/leveldb_sync.csv
+!redis/redis_sync0.csv
+!redis/redis_sync.csv
 
 # Aerospike
 !aerospike/compile.sh
