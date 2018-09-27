@@ -23,7 +23,7 @@ for th in {1..4}; do
 	done
 
 	# Stage 2
-	for size in 1 2 4 16 32 64 128 256 512; do
+	for size in 1 2 4 8 16 32 64 128 256 512; do
 		$prog $th $(( 2048/size )) $(( 2048/size )) $size "M"
 		./redis/src/redis-cli FLUSHALL > /dev/null
 		sleep 1s

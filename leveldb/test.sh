@@ -13,7 +13,7 @@ prog=$1
 
 echo "Number of threads, Number of insertions, Number of reads, Block Size, Size unit, Memory consumption, Total number of requests, Time elapsed, Requests per second"
 
-for th in {1..4}; do
+for th in 1 4; do
 
 	# Stage 1
 	for size in 1 2 4 8 16 32 64 128 256 512 1024; do
@@ -21,7 +21,7 @@ for th in {1..4}; do
 	done
 
 	# Stage 2
-	for size in 1 2 4 16 32 64 128 256 512; do
+	for size in 1 2 4 8 16 32 64 128 256 512; do
 		$prog $th $(( 2048/size )) $(( 2048/size )) $size "M"
 	done
 done
