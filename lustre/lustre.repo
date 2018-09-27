@@ -1,0 +1,14 @@
+[lustre-server]
+name=CentOS-$releasever - Lustre
+baseurl=https://downloads.hpdd.intel.com/public/lustre/latest-feature-release/el7/server/
+gpgcheck=0
+
+[e2fsprogs]
+name=CentOS-$releasever - Ldiskfs
+baseurl=https://downloads.hpdd.intel.com/public/e2fsprogs/latest/el7/
+gpgcheck=0
+
+[lustre-client]
+name=CentOS-$releasever - Lustre
+baseurl=https://downloads.hpdd.intel.com/public/lustre/latest-feature-release/el7/client/
+gpgcheck=0

@@ -1,3 +1,4 @@
+lustre/*
 aerospike/*
 couchbase/*
 couchbase-lite/*
@@ -49,6 +50,10 @@ testfiles/*
 !leveldb/sync_batch.cpp
 !leveldb/sync_m.cpp
 !leveldb/update.sh
+
+#Lustre
+!lustre/lustre.repo
+!lustre/4xVM+CentOS7-LustreFS-Cluster-Quickstart.md
 
 # Memcached
 !memcached/compile.sh

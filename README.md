@@ -37,3 +37,7 @@ The file has the following columns:
 ```n_threads, n_insertions, n_reads, block_size, size_t, memory_consumption, total_requests, time_elapsed, requests_per_second```
 
 The decimal numbers have the American format (dot).
+
+## What is this?
+
+This is just an exercise to get to know some DBs and object storage systems, and practice a bit of Bash, make and cmake, compiling and linking, and LaTeX. In the end, it's a comparison between several Redis competitors to see which one could work best to be used as a cache for a distributed file system (LustreFS).
