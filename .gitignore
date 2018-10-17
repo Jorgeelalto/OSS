@@ -6,6 +6,7 @@ ior/*
 leveldb/*
 memcached/*
 redis/*
+hiredis/*
 testfiles/*
 
 # Include test results
@@ -71,6 +72,12 @@ testfiles/*
 !redis/sync_m.cpp
 !redis/testdata.cpp
 !redis/update.sh
+
+# Hiredis
+!hiredis/compile.sh
+!hiredis/run_redis.sh
+!hiredis/sync.cpp
+!hiredis/update.sh
 
 # Test files
 !testfiles/gen.c
