@@ -20,13 +20,14 @@
 
 \section{Initial research}
 
-To design a cache system for a distributed filesystem, we will need several requirements:
+To design a cache system for a distributed filesystem, we will need several requirements fulfilled:
 \begin{itemize}
     \item Be an in-memory storage, since the disk is already used by the filesystem and we are looking to improve loading and writing times.
     \item Be persistent, save a copy of the data to the disk when needed and load it again on startup.
     \item Be able to manage big files, since we are going to work with several Terabytes of data at the same time.
+    \item Be written in C++ or C and have a C++/C API.
 \end{itemize}
-The cache system should be distributed (have the possibility of combining several nodes in one instance, and having several clients accessing them at the same time), use the memory for the main storage, save and restore a backup of the data to the file system and have a C++ or C API.
+
 
 \subsection{Candidates}
 \begin{itemize}
@@ -107,25 +108,25 @@ In the figure 2 we can confirm the previous results, since Couchbase spends more
     (64,14047)(128,8387)(256,3687)(512,1586)(1024,691)
     };\addlegendentry{Redis MT}
 % COUCHBASE
-\addplot[color=blue, mark=none]
+\addplot[color=cyan, mark=none]
     coordinates {
     (1,13071)(2,14643)(4,13859)(8,13627)(16,12607)
     (32,11306)(64,8884)(128,7062)(256,4870)(512,2914)(1024,1404)
     };\addlegendentry{Couchbase}
 % Multithreaded
-\addplot[color=blue, dashed, mark=none]
+\addplot[color=cyan, dashed, mark=none]
     coordinates {
     (1,9666)(2,14684)(4,14203)(8,13989)(16,12594)
     (32,11062)(64,9454)(128,7618)(256,5361)(512,3282)(1024,1626)
     };\addlegendentry{Couchbase MT}
 % LEVELDB
-\addplot[color=green, mark=none]
+\addplot[color=olive, mark=none]
     coordinates {
     (1,1440)(2,1127)(4,1040)(8,257)(16,458)(32,338)(64,196)
     (128,105)(256,43)(512,26)(1024,15)
     };\addlegendentry{LevelDB}
 % Multithreaded
-\addplot[color=green, dashed, mark=none]
+\addplot[color=olive, dashed, mark=none]
     coordinates {
     (1,646)(2,601)(4,572)(8,364)(16,311)
     (32,336)(64,198)(128,109)(256,55)(512,27)(1024,27)
@@ -161,28 +162,28 @@ In the figure 2 we can confirm the previous results, since Couchbase spends more
     (256,2.22171)(512,5.16475)(1024,11.8485)
     };\addlegendentry{Redis MT}
 % COUCHBASE
-\addplot[color=blue, mark=none]
+\addplot[color=cyan, mark=none]
     coordinates {
     (1,0.626705)(2,0.559433)(4,0.591063)(8,0.601149)(16,0.649784)
     (32,0.724553)(64,0.922089)(128,1.15997)(256,1.68181)
     (512,2.81057)(1024,5.83426)
     };\addlegendentry{Couchbase}
 % Multithreaded
-\addplot[color=blue, dashed, mark=none]
+\addplot[color=cyan, dashed, mark=none]
     coordinates {
     (1,0.847446)(2,0.557866)(4,0.576751)(8,0.585602)
     (16,0.650464)(32,0.740521)(64,0.866427)
     (128,1.07523)(256,1.52801)(512,2.49578)(1024,5.03543)
     };\addlegendentry{Couchbase}
 % LEVELDB
-\addplot[color=green, mark=none]
+\addplot[color=olive, mark=none]
     coordinates {
     (1,5.68684)(2,7.26678)(4,7.87215)(8,31.8641)(16,17.8652)
     (32,24.1845)(64,41.777)(128,77.3897)(256,189.313)
     (512,305.396)(1024,521.602)
     };\addlegendentry{LevelDB}
 % Multithreaded
-\addplot[color=green, dashed, mark=none]
+\addplot[color=olive, dashed, mark=none]
     coordinates {
     (1,12.6706)(2,13.6261)(4,14.3065)(8,22.4558)
     (16,26.2619)(32,24.3349)(64,41.2211)(128,75.1499)
@@ -224,13 +225,13 @@ In this case the biggest dealbreaker is Couchbase not being able to use blocks b
     (256,9.45899)(512,9.12914)
     };\addlegendentry{Redis MT}
 % COUCHBASE
-\addplot[color=blue, mark=none]
+\addplot[color=cyan, mark=none]
     coordinates {
     (1,10.7905)(2,6.20036)(4,8.25742)(8,7.06829)(16,6.59775)
     (32,0)(64,0)(128,0)(256,0)(512,0)
     };\addlegendentry{Couchbase}
 % Multithreaded
-\addplot[color=blue, dashed, mark=none]
+\addplot[color=cyan, dashed, mark=none]
     coordinates {
     (1,6.07554)(2,5.13851)(4,4.96069)(8,5.19966)
     (16,5.82822)(32,0)(64,0)(128,0)(256,0)(512,0)
@@ -253,13 +254,13 @@ In this case the biggest dealbreaker is Couchbase not being able to use blocks b
     height=7cm,
     ]
 % LEVELDB
-\addplot[color=green, mark=none]
+\addplot[color=olive, mark=none]
     coordinates {
     (1,300.198)(2,270.886)(4,334.948)(8,270.596)(16,257.808)
     (32,265.38)(64,237.141)(128,246.89)(256,246.314)(512,205.375)
     };\addlegendentry{LevelDB}
 % Multithreaded
-\addplot[color=green, dashed, mark=none]
+\addplot[color=olive, dashed, mark=none]
     coordinates {
     (1,278.273)(2,295.299)(4,248.78)(8,232.915)(16,236.224)
     (32,226.612)(64,221.586)(128.216)(256,214.328)(512,204.587)
